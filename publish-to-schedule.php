@@ -609,11 +609,11 @@ function pts_findNextSlot($post,$changePost = False){
 		*/
 		
 		
-		$msgDayAvailble = '';
+		$msgDayAvailable = '';
 		
-		$msgDayAvailble .= " (   $nPostsDay  "  . __('of','pts') . ' '. "$maxPostsThisDay ) ";
+		$msgDayAvailable .= " (   $nPostsDay  "  . __('of','pts') . ' '. "$maxPostsThisDay ) ";
 		
-		$msgDayAvailble .= ' | <strong>' . __('Availble day!','pts') . '</strong>';				
+		$msgDayAvailable .= ' | <strong>' . __('Available day!','pts') . '</strong>';				
 		
 		# if the day is today... check to see if there is time to publish within the time window configured...
 		if($dt == date("Ymd",strtotime($startDate))){
@@ -633,16 +633,16 @@ function pts_findNextSlot($post,$changePost = False){
 			}			
 			if($nowTotalMinutes < $startMinute){
 				#$msg .=  '- OK! Artigo sera agendado. <br>';
-				$msg = str_replace('<EEE>',$msgDayAvailble,$msg);
+				$msg = str_replace('<EEE>',$msgDayAvailable,$msg);
 			}			
 			if($nowTotalMinutes >= $startMinute){
 				#$msg .=  '- OK! Artigo sera agendado. <br>';
-				$msg = str_replace('<EEE>',$msgDayAvailble,$msg);
+				$msg = str_replace('<EEE>',$msgDayAvailable,$msg);
 				$startSort = $nowTotalMinutes;
 			}						
 		}
 		else{
-			$msg = str_replace('<EEE>',$msgDayAvailble,$msg);
+			$msg = str_replace('<EEE>',$msgDayAvailable,$msg);
 			#$msg .=  '- OK! Artigo sera agendado. <br>';
 		}		
 		
@@ -706,7 +706,7 @@ function pts_findNextSlot($post,$changePost = False){
 		
 
 		$msgT .=  '<p title="'.$msgByPass.'">';
-		$msgT .= __('Will be schedule to','pts') . ': <br>';
+		$msgT .= __('Will be scheduled on','pts') . ': <br>';
 		$msgT .= '<strong>';
 		$msgT .= __(date("l",strtotime($dthrPublish)),'pts') . ', ' . date(get_option('date_format'),strtotime($dthrPublish)) . ' '. __('at','') .' ' . date(get_option('time_format') , strtotime($dthrPublish));
 		$msgT .= '</strong>';
@@ -1174,7 +1174,7 @@ function pts_options_page(){
 				<td style="padding:5px;">
 					<input type="radio" name="pts_infosize" id="pts_infosize_all" value="all"<?php if ($options['pts_infosize'] == 'all') echo ' checked'; ?>>
 					<?php 
-					_e(' Show all information availble!','pts'); 
+					_e(' Show all information available!','pts'); 
 					echo '<br/>';
 					_e(' I want to see how this plugin works!','pts'); 
 					echo '<br/>';
@@ -1220,9 +1220,9 @@ function pts_options_page(){
 			
 			echo '<li><a target="_blank" href="'.$plUrl.'">'.__('Rate it','pts').'</a> '.__('on the repository!','pts').'</li>';
 			
-			$langAvailble = array();
-			array_push($langAvailble,'en','pt-BR');
-			if(! in_array(get_bloginfo('language'),$langAvailble)){
+			$langAvailable = array();
+			array_push($langAvailable,'en','pt-BR');
+			if(! in_array(get_bloginfo('language'),$langAvailable)){
 				echo '<li><a target="_blank" href="'.$plUrl.'">'.__('Help with translation!','pts').'</a>: <br>'.
 					
 					__('We dont have this plugin translated to your language yet!','pts').
@@ -1234,7 +1234,7 @@ function pts_options_page(){
 					__('The languages already translated are: ','pts');
 					echo '<li>';
 					echo '<ol>';
-					foreach($langAvailble as $lang){
+					foreach($langAvailable as $lang){
 						echo('<li>');
 						echo($lang);
 						echo('</li>');
