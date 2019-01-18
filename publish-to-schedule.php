@@ -539,6 +539,20 @@ function pts_findNextSlot($post,$changePost = False){
 			
 			
 			
+			if ($maxPostsThisDay == 1)
+			{
+				global $pts_weeks;
+				if ($nPostsDay > 0) {		
+					$pts_week = 0;
+				}
+								
+				if ($options['pts_weeks'] > 1 && $pts_week < $options['pts_weeks']) {
+					$maxPostsThisDay = 0;
+				}
+				$pts_week++;
+			}
+			
+			
 			
 			
 			if($nPostsDay >= $maxPostsThisDay){
@@ -849,6 +863,7 @@ add_action('admin_menu', 'pts_option_menu');
 # Prepare the default set of options
 $default_options['pts_start'] = '00:00';
 $default_options['pts_end'] = '23:59';
+$default_options['pts_weeks'] = '1';
 $default_options['pts_infosize'] = 'parcial';
 $default_options['pts_allowstats'] = 'yes';
 
@@ -878,6 +893,7 @@ function pts_options_page(){
 		// Fill up the options array as necessary					
 		$options['pts_start'] = $_POST['pts_start']; // like having business hours
 		$options['pts_end'] = $_POST['pts_end'];		
+		$options['pts_weeks'] = $_POST['pts_weeks'];		
 		
 		$options['pts_0'] = $_POST['pts_0'];
 		$options['pts_1'] = $_POST['pts_1'];
@@ -1037,6 +1053,21 @@ function pts_options_page(){
 
 		</table>
 		
+		
+		<h3 style="margin-top:10px;"><?php _e('How many weeks between posts?',  'pts')?></h3>
+		
+		
+		<?php _e('Example: only publish posts every fortnight.',  'pts')?>
+		<br>
+		
+		
+		<table class="optiontable">
+			<tr valign="top">
+				<th scope="row" align="left"><?php _e('Number of weeks between posts', 'pts') ?>:</th>
+				<td><input name="pts_weeks" type="text" id="weeks" value="<?php echo $options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
+				</td>
+			</tr>
+		</table>
 		
 		
 
