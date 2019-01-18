@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Publish to Schedule
+Plugin Name: Publish to Schedule Weekly
 Plugin URI: https://wordpress.org/extend/plugins/publish-to-schedule/ 
 Description: Just write! Let this plugins AUTO-schedule all posts for you! Configure once, use forever!
 Version: 4.4.2
@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 # Named used to save the plugin option array to database
-define('PTS_OPTION_NAME', 'publish-to-schedule');
+define('PTS_OPTION_NAME', 'publish-to-schedule-weekly');
 
 # URL for donation.
 define('PTS_DONATE_URL', 'https://www.paypal.com/cgi-bin/webscr?business=alexbenfica@gmail.com&cmd=_donations&item_name=PublishToSchedule&no_note=0&lc='
@@ -42,8 +42,8 @@ define('PTS_DONATE_URL', 'https://www.paypal.com/cgi-bin/webscr?business=alexben
 load_textdomain('pts', dirname(__FILE__).'/lang/' . get_locale() . '.mo');
 
 
-$plName = 'Publish to Schedule';
-$plUrl = 'https://wordpress.org/extend/plugins/publish-to-schedule/';
+$plName = 'Publish to Schedule Weekly';
+$plUrl = 'https://github.com/wongm/Publish-to-Schedule-WordPress-plugin';
 
 
 # toggle debug
