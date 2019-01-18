@@ -115,10 +115,10 @@ function pts_get_version() {
 
 function pts_insertAnalytics($getCode = False) {
 
-    $options = get_option(basename(__FILE__, ".php"));
+    $pts_options = get_option(basename(__FILE__, ".php"));
 
     # do not collect statististcs if now allowed... 	
-    if ($options['pts_allowstats'] == 'No') {
+    if ($pts_options['pts_allowstats'] == 'No') {
         return '';
     }
 
@@ -132,7 +132,7 @@ function pts_insertAnalytics($getCode = False) {
 	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	  })();
 		_gaq.push(['_setCustomVar', 1,'Site URL','" . get_option('home') . "', 1 ]);
-		_gaq.push(['_setCustomVar', 2,'Articles scheduled','" . $options['pts_statistics_total_work'] . "',1]); 	
+		_gaq.push(['_setCustomVar', 2,'Articles scheduled','" . $pts_options['pts_statistics_total_work'] . "',1]); 	
 		_gaq.push(['_setCustomVar', 3,'WP Language','" . get_bloginfo('language') . "',1]);
 	</script>";
 
@@ -382,7 +382,7 @@ add_action( 'post_submitbox_misc_actions', 'pts_postInfo' );
 
 function pts_getMaxPostsDay($datetimeCheck){
 
-	global $options;
+	global $pts_options;
 	
 
 	# id day of week is allowed... (replaces <BBB>)
@@ -390,20 +390,20 @@ function pts_getMaxPostsDay($datetimeCheck){
 	
 	/*
 	print_r($datetimeCheck);	
-	print_r($options);
+	print_r($pts_options);
 	print_r($opt);
 	echo '<br>';
 	*/
 	
 	# translate the old style option  no\yes para 0\1+
-	if($options[$opt] == 'no'){
+	if($pts_options[$opt] == 'no'){
 		return 0;	
 	}
-	if($options[$opt] == 'yes'){
+	if($pts_options[$opt] == 'yes'){
 		return 1;	
 	}
-	if($options[$opt] != ''){
-		return $options[$opt];
+	if($pts_options[$opt] != ''){
+		return $pts_options[$opt];
 	}
 	else{
 		return 1;
@@ -443,11 +443,11 @@ function pts_findNextSlot($post,$changePost = False){
 
 	
 	# load plugin configurations...	
-	$options = get_option(basename(__FILE__, ".php"));
+	$pts_options = get_option(basename(__FILE__, ".php"));
 
 	# get start and end minutes from 0 to 1440-1
-	$startMinute =  date('H',strtotime($options['pts_start'])) * 60 + date('i',strtotime($options['pts_start']));;
-	$endMinute = date('H',strtotime($options['pts_end'])) * 60 + date('i',strtotime($options['pts_end']));;
+	$startMinute =  date('H',strtotime($pts_options['pts_start'])) * 60 + date('i',strtotime($pts_options['pts_start']));;
+	$endMinute = date('H',strtotime($pts_options['pts_end'])) * 60 + date('i',strtotime($pts_options['pts_end']));;
 
 	$msg = '';
 	
@@ -462,7 +462,7 @@ function pts_findNextSlot($post,$changePost = False){
 	}
 	
 	if($pts_debug and True){
-		$msg .= 'DEBUG: $options = ' . print_r($options,True) . '<br>';		
+		$msg .= 'DEBUG: $pts_options = ' . print_r($pts_options,True) . '<br>';		
 	}
 	
 	
@@ -546,7 +546,7 @@ function pts_findNextSlot($post,$changePost = False){
 					$pts_week = 0;
 				}
 								
-				if ($options['pts_weeks'] > 1 && $pts_week < $options['pts_weeks']) {
+				if ($pts_options['pts_weeks'] > 1 && $pts_week < $pts_options['pts_weeks']) {
 					$maxPostsThisDay = 0;
 				}
 				$pts_week++;
@@ -717,7 +717,7 @@ function pts_findNextSlot($post,$changePost = False){
 	
 		# uses only to debug and show logs on main screen...
 		if(!$changePost){		
-			if($options['pts_infosize'] == 'all'){
+			if($pts_options['pts_infosize'] == 'all'){
 				return $msg . $msgT;
 			}
 			else{
@@ -727,13 +727,13 @@ function pts_findNextSlot($post,$changePost = False){
 		}
 		else{
 			# statistics to show how many post the plugin helps to schedule...
-			if(array_key_exists('pts_statistics_total_work',$options)){
-				$options['pts_statistics_total_work'] = $options['pts_statistics_total_work'] + 1;
+			if(array_key_exists('pts_statistics_total_work',$pts_options)){
+				$pts_options['pts_statistics_total_work'] = $pts_options['pts_statistics_total_work'] + 1;
 			}
 			else{
-				$options['pts_statistics_total_work'] = 1;
+				$pts_options['pts_statistics_total_work'] = 1;
 			}
-			update_option(basename(__FILE__, ".php"), $options);
+			update_option(basename(__FILE__, ".php"), $pts_options);
 			return $dthrPublish;		
 		}
 	}		
@@ -888,30 +888,30 @@ function pts_options_page(){
 	if (isset($_POST['update_options'])) {
 		
 		# loads before change with post values...
-		$options = get_option(basename(__FILE__, ".php"));
+		$pts_options = get_option(basename(__FILE__, ".php"));
 		
 		// Fill up the options array as necessary					
-		$options['pts_start'] = $_POST['pts_start']; // like having business hours
-		$options['pts_end'] = $_POST['pts_end'];		
-		$options['pts_weeks'] = $_POST['pts_weeks'];		
+		$pts_options['pts_start'] = $_POST['pts_start']; // like having business hours
+		$pts_options['pts_end'] = $_POST['pts_end'];		
+		$pts_options['pts_weeks'] = $_POST['pts_weeks'];		
 		
-		$options['pts_0'] = $_POST['pts_0'];
-		$options['pts_1'] = $_POST['pts_1'];
-		$options['pts_2'] = $_POST['pts_2'];
-		$options['pts_3'] = $_POST['pts_3'];
-		$options['pts_4'] = $_POST['pts_4'];
-		$options['pts_5'] = $_POST['pts_5'];
-		$options['pts_6'] = $_POST['pts_6'];
+		$pts_options['pts_0'] = $_POST['pts_0'];
+		$pts_options['pts_1'] = $_POST['pts_1'];
+		$pts_options['pts_2'] = $_POST['pts_2'];
+		$pts_options['pts_3'] = $_POST['pts_3'];
+		$pts_options['pts_4'] = $_POST['pts_4'];
+		$pts_options['pts_5'] = $_POST['pts_5'];
+		$pts_options['pts_6'] = $_POST['pts_6'];
 		
-		$options['pts_infosize'] = $_POST['pts_infosize'];
+		$pts_options['pts_infosize'] = $_POST['pts_infosize'];
 		
-		$options['pts_allowstats'] = $_POST['pts_allowstats'];
+		$pts_options['pts_allowstats'] = $_POST['pts_allowstats'];
 		
 		
 		# if all weeks are NO... change the monday to YES
 		$allNo = 0;
 		for($i=0;$i<7;$i++){
-			if($options['pts_'.$i] == 'no'){
+			if($pts_options['pts_'.$i] == 'no'){
 				$allNo += 1;
 			}
 			else{
@@ -919,26 +919,26 @@ function pts_options_page(){
 			}
 		}
 		if($allNo == 7){
-			$options['pts_1'] = 'Yes';
+			$pts_options['pts_1'] = 'Yes';
 		}
 		
 		
 		
-		while (strlen($options['pts_start']) < 5) $options['pts_start'] = "0" . $options['pts_start'];
-		while (strlen($options['pts_end']) < 5) $options['pts_end'] = "0" . $options['pts_end'];		
-		if (!gmdate('H:i',$options['pts_start'])) $options['pts_start'] = '00:00'; //guarantee a valid time
-		if (!gmdate('H:i',$options['pts_end'])) $options['pts_end'] = '23:59';
-		$time = explode(":",$options['pts_start']);
+		while (strlen($pts_options['pts_start']) < 5) $pts_options['pts_start'] = "0" . $pts_options['pts_start'];
+		while (strlen($pts_options['pts_end']) < 5) $pts_options['pts_end'] = "0" . $pts_options['pts_end'];		
+		if (!gmdate('H:i',$pts_options['pts_start'])) $pts_options['pts_start'] = '00:00'; //guarantee a valid time
+		if (!gmdate('H:i',$pts_options['pts_end'])) $pts_options['pts_end'] = '23:59';
+		$time = explode(":",$pts_options['pts_start']);
 		if (strlen($time[0]) < 2) $time[0] = '0' . $time[0];
 		if (strlen($time[1]) < 2) $time[1] = '0' . $time[1];
-		$options['pts_start'] = date("H:i",mktime($time[0],$time[1],0,9,11,2001)); // convert overruns
-		$time = explode(":",$options['pts_end']);
+		$pts_options['pts_start'] = date("H:i",mktime($time[0],$time[1],0,9,11,2001)); // convert overruns
+		$time = explode(":",$pts_options['pts_end']);
 		if (strlen($time[0]) < 2) $time[0] = '0' . $time[0];
 		if (strlen($time[1]) < 2) $time[1] = '0' . $time[1];
-		$options['pts_end'] = date("H:i",mktime($time[0],$time[1],0,9,11,2001));
+		$pts_options['pts_end'] = date("H:i",mktime($time[0],$time[1],0,9,11,2001));
 		
 		// store the option values under the plugin filename
-		update_option(basename(__FILE__, ".php"), $options);
+		update_option(basename(__FILE__, ".php"), $pts_options);
 		
 		// Show a message to say we've done something
 		if($allNo == 7){
@@ -949,7 +949,7 @@ function pts_options_page(){
 		}		
 		
 	} else {
-		$options = get_option(basename(__FILE__, ".php"));
+		$pts_options = get_option(basename(__FILE__, ".php"));
 	}
 	
 	
@@ -1037,7 +1037,7 @@ function pts_options_page(){
 							type="text" 
 							id="<?php echo $day; ?>"
 							name="<?php echo "pts_$iday"; ?>" 
-							value="<?php if ($options["pts_$iday"] == 'no') echo '0'; else if ($options["pts_$iday"] == 'yes') echo '1'; else echo $options["pts_$iday"]; ?>" 
+							value="<?php if ($pts_options["pts_$iday"] == 'no') echo '0'; else if ($pts_options["pts_$iday"] == 'yes') echo '1'; else echo $pts_options["pts_$iday"]; ?>" 
 							style="width: 40px;"/>
 					</td>
 					
@@ -1064,7 +1064,7 @@ function pts_options_page(){
 		<table class="optiontable">
 			<tr valign="top">
 				<th scope="row" align="left"><?php _e('Number of weeks between posts', 'pts') ?>:</th>
-				<td><input name="pts_weeks" type="text" id="weeks" value="<?php echo $options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
+				<td><input name="pts_weeks" type="text" id="weeks" value="<?php echo $pts_options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
 				</td>
 			</tr>
 		</table>
@@ -1084,12 +1084,12 @@ function pts_options_page(){
 		<table class="optiontable">
 			<tr valign="top">
 				<th scope="row" align="left"><?php _e('Start Time', 'pts') ?>:</th>
-				<td><input name="pts_start" type="text" id="start" value="<?php echo $options['pts_start']; ?>" size="10" /><?php _e(' (defaults to 00:00)', 'pts') ?>
+				<td><input name="pts_start" type="text" id="start" value="<?php echo $pts_options['pts_start']; ?>" size="10" /><?php _e(' (defaults to 00:00)', 'pts') ?>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row" align="left"><?php _e('End Time', 'pts') ?>:</th>
-				<td><input name="pts_end" type="text" id="end" value="<?php echo $options['pts_end']; ?>" size="10" /><?php _e(' (defaults to 23:59)', 'pts') ?>
+				<td><input name="pts_end" type="text" id="end" value="<?php echo $pts_options['pts_end']; ?>" size="10" /><?php _e(' (defaults to 23:59)', 'pts') ?>
 				</td>
 			</tr>
 			
@@ -1172,7 +1172,7 @@ function pts_options_page(){
 		<table>									
 			<tr valign="top">
 				<td style="padding:5px;">
-					<input type="radio" name="pts_infosize" id="pts_infosize_all" value="all"<?php if ($options['pts_infosize'] == 'all') echo ' checked'; ?>>
+					<input type="radio" name="pts_infosize" id="pts_infosize_all" value="all"<?php if ($pts_options['pts_infosize'] == 'all') echo ' checked'; ?>>
 					<?php 
 					_e(' Show all information available!','pts'); 
 					echo '<br/>';
@@ -1185,7 +1185,7 @@ function pts_options_page(){
 				
 				<tr valign="top">
 				<td style="padding:5px;">
-					<input type="radio" name="pts_infosize" id="pts_infosize_parcial" value="parcial"<?php if ($options['pts_infosize'] != 'all') echo ' checked'; ?>>
+					<input type="radio" name="pts_infosize" id="pts_infosize_parcial" value="parcial"<?php if ($pts_options['pts_infosize'] != 'all') echo ' checked'; ?>>
 					<?php 
 					_e(' Just do the magic!','pts');
 					echo '<br/>';
@@ -1274,8 +1274,8 @@ function pts_options_page(){
 		?> 
 		
 		<td style="padding:5px;">
-			<input type="radio" name="pts_allowstats" id="pts_allowstats" value="yes" <?php if ($options['pts_allowstats'] != 'no') echo ' checked'; ?>/><?php _e('Yes', 'pts') ?>
-			<input type="radio" name="pts_allowstats" id="pts_allowstats" value="no" <?php if ($options['pts_allowstats'] == 'no') echo ' checked'; ?>/><?php _e('No', 'pts') ?>
+			<input type="radio" name="pts_allowstats" id="pts_allowstats" value="yes" <?php if ($pts_options['pts_allowstats'] != 'no') echo ' checked'; ?>/><?php _e('Yes', 'pts') ?>
+			<input type="radio" name="pts_allowstats" id="pts_allowstats" value="no" <?php if ($pts_options['pts_allowstats'] == 'no') echo ' checked'; ?>/><?php _e('No', 'pts') ?>
 		</td>
 		
 				
@@ -1286,16 +1286,16 @@ function pts_options_page(){
 		
 
 		<?php		
-		if($options['pts_statistics_total_work'] > 3){
+		if($pts_options['pts_statistics_total_work'] > 3){
 			echo '<h3 style="margin-top:20px;">'.__('Did it save you a lot of time?','pts').'</h3>';
-			if($options['pts_statistics_total_work'] > 20){
+			if($pts_options['pts_statistics_total_work'] > 20){
 				echo __('Ohh yes... it certainly did!','pts');
 				echo '<br>';
 			}
 			echo __('Since you installed this plugin','pts');
 			echo ', ';
 			echo '<strong>';
-			echo $options['pts_statistics_total_work'];
+			echo $pts_options['pts_statistics_total_work'];
 			echo ' ';
 			echo __(' posts were automatically scheduled, saving your time!', 'pts');
 			//echo __(' posts were automatically scheduled, saving your time! So...', 'pts');
@@ -1328,7 +1328,7 @@ function pts_options_page(){
 	</div>
 	<?php	
 }
-$options = get_option(basename(__FILE__, ".php"));
+$pts_options = get_option(basename(__FILE__, ".php"));
 
 
 
