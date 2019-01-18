@@ -49,6 +49,7 @@ function pts_settings_link($links) {
 # Prepare the default set of options
 $default_options['pts_start'] = '00:00';
 $default_options['pts_end'] = '23:59';
+$default_options['pts_weeks'] = '1';
 $default_options['pts_infosize'] = 'parcial';
 $default_options['pts_allowstats'] = 'yes';
 
@@ -77,9 +78,10 @@ function pts_options_page(){
 		# loads before change with post values...
 		$pts_options = get_option(PTS_OPTION_NAME);
 		
-		// Fill up the options array as necessary					
+		// Fill up the options array as necessary
 		$pts_options['pts_start'] = $_POST['pts_start']; // like having business hours
-		$pts_options['pts_end'] = $_POST['pts_end'];		
+		$pts_options['pts_end'] = $_POST['pts_end'];
+		$pts_options['pts_weeks'] = $_POST['pts_weeks'];
 		
 		$pts_options['pts_0'] = $_POST['pts_0'];
 		$pts_options['pts_1'] = $_POST['pts_1'];
@@ -247,6 +249,22 @@ function pts_options_page(){
 			
 			?>
 
+		</table>
+ 		
+ 		
+		<h3 style="margin-top:10px;"><?php _e('How many weeks between posts?',  'pts')?></h3>
+		
+		
+		<?php _e('Example: only publish posts every fortnight.',  'pts')?>
+		<br>
+		
+		
+		<table class="optiontable">
+			<tr valign="top">
+				<th scope="row" align="left"><?php _e('Number of weeks between posts', 'pts') ?>:</th>
+				<td><input name="pts_weeks" type="text" id="weeks" value="<?php echo $pts_options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
+				</td>
+			</tr>
 		</table>
 		
 		

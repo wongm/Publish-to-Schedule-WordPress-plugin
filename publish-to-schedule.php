@@ -347,6 +347,21 @@ function pts_findNextSlot($post,$changePost = False){
 					#break;
 				}
 			}
+ 			
+ 			
+ 			
+			if ($maxPostsThisDay == 1)
+			{
+				global $pts_week;
+				if ($nPostsDay > 0) {		
+					$pts_week = 0;
+				}
+								
+				if ($pts_options['pts_weeks'] > 1 && $pts_week < $pts_options['pts_weeks']) {
+					$maxPostsThisDay = 0;
+				}
+				$pts_week++;
+			}
 			
 			
 			
