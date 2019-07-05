@@ -96,7 +96,7 @@ include(plugin_dir_path( __FILE__ ) . 'publish-to-schedule-admin.php');
 
     # create actions for each one ...
     foreach($possibleStatus as $status) {
-        add_action($status.'_to_publish','pts_do_publish_schedule',1);	
+        add_action($status.'_to_publish','pts_do_publish_schedule',1);
     }    
     
 // }
@@ -111,10 +111,10 @@ function pts_createJsToCompareTime($HTMLWrong,$HTMLOK){
 	$HTMLOK = trim($HTMLOK);
 	
 	# minutes...
-	$maxAllowedDif = 20;	
+	$maxAllowedDif = 20;
 	
 	# seconds...
-	$phplocal = current_time('timestamp', $gmt = 0);	
+	$phplocal = current_time('timestamp', $gmt = 0);
 	
 	# minutes...
 	$phplocal = $phplocal / 60;
@@ -124,72 +124,40 @@ function pts_createJsToCompareTime($HTMLWrong,$HTMLOK){
 	
 	
 	$jsCT = '
-	
-	<script type="text/javascript">	
 
-	
-	function jsCompareTimes(){	
-		d = new Date();						
+	<script type="text/javascript">
+
+	function jsCompareTimes(){
+		d = new Date();
 		var currentHours = d.getHours();
 		var currentMinutes = d.getMinutes();
-		
-		
-		
 		var jsLocal = currentHours*60 + currentMinutes;
 		var phpLocal = '.$phplocal.';
-		
-		var maxAllowedDif = '.$maxAllowedDif.';				
-		
-		difference_in_minutes = Math.abs(jsLocal - phpLocal);				
-		
+
+		var maxAllowedDif = '.$maxAllowedDif.';
+
+		difference_in_minutes = Math.abs(jsLocal - phpLocal);
+
 		//alert("difference: " + difference_in_minutes + "\nphpLocal:"+ phpLocal + "\n_jsLocal: "+ jsLocal);
-		
+
 		// ignores big differences as being 23 to 00 hour
 		if(difference_in_minutes > 60*12){
 			difference_in_minutes = 0;
-		}		
-			
+		}
+
 		if (difference_in_minutes > maxAllowedDif){
-			//alert("Server time is wrong");			
+			//alert("Server time is wrong");
 			document.getElementById("divjsCT").innerHTML=\''.$HTMLWrong.'\';
-		}	
+		}
 		else{
 			//alert("Server time is OK! " + difference_in_minutes);
 			document.getElementById("divjsCT").innerHTML=\''.$HTMLOK.'\';
-			
 		}
-		
-	}		
-		
+	}
     </script>';
     
 	return $jsCT;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function pts_getMaxPostsDay($datetimeCheck){
 
@@ -200,7 +168,7 @@ function pts_getMaxPostsDay($datetimeCheck){
 	$opt = 'pts_'.date('w',$datetimeCheck);
 	
 	/*
-	print_r($datetimeCheck);	
+	print_r($datetimeCheck);
 	print_r($pts_options);
 	print_r($opt);
 	echo '<br>';
@@ -208,10 +176,10 @@ function pts_getMaxPostsDay($datetimeCheck){
 	
 	# translate the old style option  no\yes para 0\1+
 	if($pts_options[$opt] == 'no'){
-		return 0;	
+		return 0;
 	}
 	if($pts_options[$opt] == 'yes'){
-		return 1;	
+		return 1;
 	}
 	if($pts_options[$opt] != ''){
 		return $pts_options[$opt];
@@ -220,12 +188,6 @@ function pts_getMaxPostsDay($datetimeCheck){
 		return 1;
 	}	
 }
-
-
-
-
-
-
 
 
 
@@ -244,15 +206,14 @@ function pts_findNextSlot($post,$changePost = False){
 			$msg .= '<br>';
 			$msg .= __('In this case, the plugin will do nothing!',  'pts');
 			if($changePost == False){
-				return $msg;			
+				return $msg;
 			}
 			else{
 				return null;
-			}			
-		}		
+			}
+		}
 	}
 
-	
 	# load plugin configurations...	
 	$pts_options = get_option(PTS_OPTION_NAME);
 
@@ -261,23 +222,18 @@ function pts_findNextSlot($post,$changePost = False){
 	$endMinute = date('H',strtotime($pts_options['pts_end'])) * 60 + date('i',strtotime($pts_options['pts_end']));;
 
 	$msg = '';
-	
-	
+
 	# dates from today...
 	$startDate = date('Ymd', strtotime(current_time('mysql', $gmt = 0)));
-	
-	
-	
+
 	if($pts_debug and True){
 		$msg .= 'DEBUG: $startDate = ' . $startDate . '<br>';
 	}
-	
+
 	if($pts_debug and True){
-		$msg .= 'DEBUG: $pts_options = ' . print_r($pts_options,True) . '<br>';		
+		$msg .= 'DEBUG: $pts_options = ' . print_r($pts_options,True) . '<br>';
 	}
-	
-	
-	
+
 	$sql = '
 		select 
 			ID,			
@@ -296,19 +252,15 @@ function pts_findNextSlot($post,$changePost = False){
 			order by post_date ASC
 		
 	
-	';	
+	';
 	$recentPosts = $wpdb->get_results($sql);
 	
 	$maxDaysFuture = 5000;
 
-
 	if($pts_debug and True){
-		$msg .= $sql;		
+		$msg .= $sql;
 	}
 
-	
-	
-	
 	# next dates allowed to publish...
 	for($offset=0;$offset<$maxDaysFuture;$offset+=1){
 		
@@ -316,17 +268,14 @@ function pts_findNextSlot($post,$changePost = False){
 		$cssDayAllowed = 'color:green; text-decoration:none;';
 		$cssDayForbid = 'color:red; text-decoration:line-through;';
 		$cssDayTooLate = 'color:green; text-decoration:line-through;';
-	
-		$datetimeCheck = strtotime(current_time('mysql', $gmt = 0) . ' + '.$offset.' days');	
-		$dt = date("Ymd",$datetimeCheck);				
+
+		$datetimeCheck = strtotime(current_time('mysql', $gmt = 0) . ' + '.$offset.' days');
+		$dt = date("Ymd",$datetimeCheck);
 		$msg .=  '' . date('M j, Y',$datetimeCheck) . ' - <span style="<BBB>"> '.__(date("D",$datetimeCheck),'pts').'</span><CCC><DDD><EEE><br>';
-		
 
 		$maxPostsThisDay = pts_getMaxPostsDay($datetimeCheck);
 		$nPostsDay = 0;
 
-	
-	
 		# if there are no posts in the day...
 		if(count($recentPosts)){
 			
@@ -334,46 +283,38 @@ function pts_findNextSlot($post,$changePost = False){
 			
 			foreach($recentPosts as $rp){
 				
-				if($rp->dtfind == $dt){					
+				if($rp->dtfind == $dt){
 					$thereArePosts = True;
 					$nPostsDay += 1;
-							
-					
-					# garante o agendamento para hoarios posteriores no mesmo dia.		
+
+					# garante o agendamento para hoarios posteriores no mesmo dia.
 					#$startMinute =  date('H',$rp->post_date) * 60 + date('i',$rp->post_date);
 					#echo date('i',$rp->post_date);
-					#echo $startMinute . '<br>';							
+					#echo $startMinute . '<br>';
 					
 					#break;
 				}
 			}
- 			
- 			
- 			
+
 			if ($maxPostsThisDay == 1)
 			{
 				global $pts_week;
-				if ($nPostsDay > 0) {		
+				if ($nPostsDay > 0) {
 					$pts_week = 0;
 				}
-								
 				if ($pts_options['pts_weeks'] > 1 && $pts_week < $pts_options['pts_weeks']) {
 					$maxPostsThisDay = 0;
 				}
 				$pts_week++;
 			}
-			
-			
-			
-			
-			
+
 			if($nPostsDay >= $maxPostsThisDay){
 				
 				$msgThereIsPost	= '';
 				
-				if(($nPostsDay == 1) & ($maxPostsThisDay == 1)){		
+				if(($nPostsDay == 1) & ($maxPostsThisDay == 1)){
 					$msgThereIsPost .= ' | ' . __('post at ','pts');
-					$msgThereIsPost .= ' ';				
+					$msgThereIsPost .= ' ';
 					$msgThereIsPost .= '<a title="'.__('Edit post',  'pts').' : '.$rp->post_title.
 						'" target="_blank" href="post.php?post='.$rp->ID.'&action=edit">'.
 					date(get_option('time_format'),strtotime($rp->post_date)).'</a>';
@@ -382,9 +323,9 @@ function pts_findNextSlot($post,$changePost = False){
 					$msgThereIsPost .= " ($nPostsDay "  . __('of','pts') . ' '. "$maxPostsThisDay)";
 				}
 				 
-				$msg = str_replace('<CCC>',$msgThereIsPost,$msg);				
+				$msg = str_replace('<CCC>',$msgThereIsPost,$msg);
 				# default style for positive day of week
-				$msg = str_replace('<BBB>',$cssDayAllowed,$msg);				
+				$msg = str_replace('<BBB>',$cssDayAllowed,$msg);
 				$msg = str_replace('<EEE>','',$msg);
 				
 				continue;
@@ -396,22 +337,16 @@ function pts_findNextSlot($post,$changePost = False){
 		else{
 			$msg = str_replace('<CCC>','',$msg);
 		}
-		
-	
 
-	
-		
-		
-				
-		if($nPostsDay >= $maxPostsThisDay){			
+		if($nPostsDay >= $maxPostsThisDay){
 			# change style for not allowed
 			$msg = str_replace('<BBB>',$cssDayForbid,$msg);
 			$msg = str_replace('<EEE>','',$msg);
 			continue;
-		}	
+		}
 	
 		#choose the start time that will be used to sort the post time...
-		$startSort = $startMinute;	
+		$startSort = $startMinute;
 		
 		/*
 		if($pts_debug and True){
@@ -425,7 +360,7 @@ function pts_findNextSlot($post,$changePost = False){
 		
 		$msgDayavailable .= " (   $nPostsDay  "  . __('of','pts') . ' '. "$maxPostsThisDay ) ";
 		
-		$msgDayavailable .= ' | <strong>' . __('available day!','pts') . '</strong>';				
+		$msgDayavailable .= ' | <strong>' . __('available day!','pts') . '</strong>';
 		
 		# if the day is today... check to see if there is time to publish within the time window configured...
 		if($dt == date("Ymd",strtotime($startDate))){
@@ -436,7 +371,7 @@ function pts_findNextSlot($post,$changePost = False){
 			$nowTotalMinutes =  date('H',strtotime($nowLocal)) * 60 + date('i',strtotime($nowLocal));;
 			
 			if($nowTotalMinutes > $endMinute){
-				$msgTooLateToday = ' | ' . __('Too late to publish','pts');				
+				$msgTooLateToday = ' | ' . __('Too late to publish','pts');
 				$msg = str_replace('<BBB>',$cssDayTooLate,$msg);
 				$msg = str_replace('<DDD>',$msgTooLateToday,$msg);
 				
@@ -475,7 +410,7 @@ function pts_findNextSlot($post,$changePost = False){
 		# http://www.php.net/manual/pt_BR/function.srand.php		
 		srand(intval(sqrt($post->ID) * 10000));
 				
-		$minutePublish = rand($startSort,$endMinute);		
+		$minutePublish = rand($startSort,$endMinute);
 		if($minutePublish==0){
 			#avoid divide by zero on module (%)...
 			$minutePublish += 1;
@@ -495,13 +430,13 @@ function pts_findNextSlot($post,$changePost = False){
 			$minutePublish = $startSort + 3;
 		}
 		
-		$dthrPublish = date("Y-m-d",$datetimeCheck) .' '.  intval($minutePublish/60) .':'. $minutePublish%60;		
+		$dthrPublish = date("Y-m-d",$datetimeCheck) .' '.  intval($minutePublish/60) .':'. $minutePublish%60;
 		
 		
 		/*
 		if($pts_debug){
 			# sets the publish time to 1 minute in the future... to test cron!
-			#$dthrPublish = date('Y-m-d H:i',strtotime(current_time('mysql', $gmt = 0) . ' + 65 minutes'));						
+			#$dthrPublish = date('Y-m-d H:i',strtotime(current_time('mysql', $gmt = 0) . ' + 65 minutes'));
 		}
 		*/
 		
@@ -509,12 +444,12 @@ function pts_findNextSlot($post,$changePost = False){
 		
 		
 		# parcial message... not complete.
-		$msgT = '';				
+		$msgT = '';
 		
 		$msgByPass =  __('To publish in a different date and bypass the plugin, first choose the schedule date from the WordPress controls above and then click the Schedule button!',  'pts');
 		
-		#$msgByPass = '<span style="font-size:11px;">' .  $msgByPass . '</span>';		
-		#$msgT .= '<br>';		
+		#$msgByPass = '<span style="font-size:11px;">' .  $msgByPass . '</span>';
+		#$msgT .= '<br>';
 		
 
         
@@ -523,9 +458,9 @@ function pts_findNextSlot($post,$changePost = False){
 		$msgT .= '<strong>';
 		$msgT .= __(date("l",strtotime($dthrPublish)),'pts') . ', ' . date('M j, Y' ,strtotime($dthrPublish)) . ' '. __('at','') .' ' . date(get_option('time_format') , strtotime($dthrPublish));
 		$msgT .= '</strong>';
-		$msgT .= '</p>';				
+		$msgT .= '</p>';
 		
-		#$msgT .= '<br>';		
+		#$msgT .= '<br>';
 	
 	
 		# uses only to debug and show logs on main screen...
@@ -546,7 +481,7 @@ function pts_findNextSlot($post,$changePost = False){
 				$pts_options['pts_statistics_total_work'] = 1;
 			}
 			// update_option(basename(__FILE__, ".php"), $pts_options);
-			return $dthrPublish;		
+			return $dthrPublish;
 		}
 	}		
 	
@@ -558,7 +493,7 @@ function pts_findNextSlot($post,$changePost = False){
 			__('Please contact the plugin developer!','pts');
 	}
 	else{
-		return null;		
+		return null;
 	}
 	
 }
@@ -578,7 +513,7 @@ function pts_findNextSlot($post,$changePost = False){
 # this is where the magic happens... :)
 function pts_do_publish_schedule($post){
 	global $wpdb;
-	global $pts_debug;	
+	global $pts_debug;
 	
 	$newDate = pts_findNextSlot($post,True);
 
@@ -602,7 +537,7 @@ function pts_do_publish_schedule($post){
 	
 	# treatment to deal with things like GMT-2:30...
 	$gmt_offsetHours = intval($gmt_offset); 
-	$gmt_offsetMinutes = ($gmt_offset - $gmt_offsetHours) * 60;	
+	$gmt_offsetMinutes = ($gmt_offset - $gmt_offsetHours) * 60;
 	# add the plus signal to concatenate on string time math below... the minus comes by default...
 	if($gmt_offsetHours > 0){
 		$gmt_offsetHours = '+'.$gmt_offsetHours; 
@@ -626,6 +561,6 @@ function pts_do_publish_schedule($post){
 	# changes post_status to be scheduled...
 	$post->post_status = 'future';
 	
-	wp_update_post($post);		
-	return $post;	
+	wp_update_post($post);
+	return $post;
 }
