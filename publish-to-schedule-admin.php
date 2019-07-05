@@ -292,7 +292,6 @@ function pts_options_page(){
 				<td><input name="pts_months" type="text" id="months" value="<?php echo $pts_options['pts_months']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
 				</td>
 			</tr>
-		</table>
 		
 		
 
@@ -402,7 +401,6 @@ function pts_options_page(){
 					echo '<br/>';
 					_e(' (Might be a lot of text! Good for debugging purposes or enthusiats!)', 'pts'); 
 					 ?>
-					 />					
 				</td>
 				
 				<tr valign="top">
@@ -413,7 +411,6 @@ function pts_options_page(){
 					echo '<br/>';
 					_e(' Only show the calculated "auto schedule date" for the post!','pts');
 					?>
-					/>
 				</td>
 			</tr>			
 		</table>
