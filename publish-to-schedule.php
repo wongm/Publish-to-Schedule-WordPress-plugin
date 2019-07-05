@@ -274,7 +274,7 @@ function pts_findNextSlot($post,$changePost = False){
 		$nPostsDay = 0;
 
 		# if there are no posts in the day...
-		if(count($recentPosts)){
+		if(count($recentPosts) || $pts_options['pts_frequency'] == 'months'){
 			
 			$thereArePosts = False;
 			
@@ -295,8 +295,6 @@ function pts_findNextSlot($post,$changePost = False){
 
 			if ($maxPostsThisDay == 1)
 			{
-				global $pts_week, $pts_month, $pts_month_name;
-				
 				// we have a post on this day: reset all the counts
 				if ($nPostsDay > 0) {
 					$pts_month_name = $monthToCheck;
@@ -304,16 +302,33 @@ function pts_findNextSlot($post,$changePost = False){
 					$pts_week = 0;
 				}
 				
-				// new month has started: reset the monthly counts
-				if ($pts_month_name != $monthToCheck) {
-					$pts_month_name = $monthToCheck;
-					$pts_month++;
-					$pts_week = 1;
-				}
-				
-				// if publishing monthly, skip the slot for some days
-				if ($pts_options['pts_frequency'] == 'months' && $pts_month < $pts_options['pts_months'] && $pts_month_name == $monthToCheck) {
-					$maxPostsThisDay = 0;
+				// if publishing monthly
+				if ($pts_options['pts_frequency'] == 'months') {
+					// new month has started: reset the monthly counts
+					if ($pts_month_name != $monthToCheck) {
+						$pts_month_name = $monthToCheck;
+						$pts_month++;
+						$pts_week = 1;
+					}
+					
+					// skip the slot if not the right month
+					if ($pts_month < $pts_options['pts_months'] && $pts_month_name == $monthToCheck) {
+						$maxPostsThisDay = 0;
+					}
+					
+					// Get the first day of the month.
+					$firstOfMonth = strtotime(date("Y-m-01", $datetimeCheck));
+					// then work out what week of the month, for the current date
+					$weekOfMonth = (intval(date("W", $datetimeCheck)) - intval(date("W", $firstOfMonth)) + 1);
+					
+					// also check date of the current month
+					$dateOfMonth = date("d", $datetimeCheck);
+					
+					// skip the slot not the right week of the month
+					// we want the X day of the month, with extra check for first week of month
+					if ($weekOfMonth > $pts_options['pts_weeks'] && $dateOfMonth > 7) {
+						$maxPostsThisDay = 0;
+					}
 				}
 				
 				// if publishing weekly, skip the slot for some days
