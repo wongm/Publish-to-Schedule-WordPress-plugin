@@ -23,6 +23,12 @@ function pts_option_menu() {
 add_action('admin_menu', 'pts_option_menu');
 
 
+// Add CSS and JS files
+function pts_assets( $hook ) {
+    wp_enqueue_style( 'pts_assets_css', plugin_dir_url( __FILE__ ) . '/style.css' );
+    wp_enqueue_script( 'pts_assets_js', plugin_dir_url( __FILE__ ) . '/script.js', array( 'jquery' ), '1.0.0', true );
+}
+add_action( 'admin_enqueue_scripts', 'pts_assets' );
 
 
 
@@ -42,6 +48,7 @@ add_filter("plugin_action_links_$plugin", 'pts_settings_link' );
 $default_options['pts_start'] = '00:00';
 $default_options['pts_end'] = '23:59';
 $default_options['pts_weeks'] = '1';
+$default_options['pts_months'] = '1';
 $default_options['pts_infosize'] = 'parcial';
 $default_options['pts_allowstats'] = 'yes';
 
@@ -74,6 +81,7 @@ function pts_options_page(){
 		$pts_options['pts_start'] = $_POST['pts_start']; // like having business hours
 		$pts_options['pts_end'] = $_POST['pts_end'];
 		$pts_options['pts_weeks'] = $_POST['pts_weeks'];
+		$pts_options['pts_months'] = $_POST['pts_months'];
 		
 		$pts_options['pts_0'] = $_POST['pts_0'];
 		$pts_options['pts_1'] = $_POST['pts_1'];
@@ -171,6 +179,24 @@ function pts_options_page(){
 		<form method="post" action="">
 		
 		<fieldset class="options">
+		
+		
+		
+<div class="nav-tab-wrapper">
+    	<span class="nav-tab nav-tab-active"><input type="radio" id="days" name="frequency" value="days">
+		<label for="days">Days</label></span>
+        <span class="nav-tab"><input type="radio" id="weeks" name="frequency" value="weeks">
+		<label for="weeks">Weeks</label></span>
+        <span class="nav-tab"><input type="radio" id="months" name="frequency" value="months">
+		<label for="months">Months</label></span>
+</div>
+
+
+    <div id='sections'>
+    <section id="daysContent">This is the main welcome screen content</section>
+    <section id="weeksContent">The credit screen content should go here</section>
+    <section id="monthsContent">The months screen content should go here</section>
+    </div>
 
 		<?php
 		if($pts_debug){
@@ -255,6 +281,15 @@ function pts_options_page(){
 			<tr valign="top">
 				<th scope="row" align="left"><?php _e('Number of weeks between posts', 'pts') ?>:</th>
 				<td><input name="pts_weeks" type="text" id="weeks" value="<?php echo $pts_options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
+				</td>
+			</tr>
+		</table>
+		
+		
+		<table class="optiontable">
+			<tr valign="top">
+				<th scope="row" align="left"><?php _e('Number of months between posts', 'pts') ?>:</th>
+				<td><input name="pts_months" type="text" id="months" value="<?php echo $pts_options['pts_months']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
 				</td>
 			</tr>
 		</table>
