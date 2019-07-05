@@ -60,10 +60,6 @@ include(plugin_dir_path( __FILE__ ) . 'pts-donate.php');
 include(plugin_dir_path( __FILE__ ) . 'pts-metabox.php');
 include(plugin_dir_path( __FILE__ ) . 'publish-to-schedule-admin.php');
 
-
-
-
-
 #Actions that change post status...
 #https://codex.wordpress.org/Post_Status_Transitions
 

@@ -2,7 +2,7 @@
 
 # Define the options menu
 function pts_option_menu() {
-    global $plName;	
+    global $plName;
     
     if (!current_user_can('manage_options')) return;    
 
@@ -26,23 +26,15 @@ add_action('admin_menu', 'pts_option_menu');
 
 
 
-
-
-
-	
 // Add settings link on plugin page
 function pts_settings_link($links) { 
     $settings_link = '<a href="options-general.php?page='.plugin_basename(__FILE__).'">' . __('Settings','pts') .'</a>'; 
     array_unshift($links, $settings_link); 
     return $links; 
-  } 
-  $plugin = plugin_basename(__FILE__); 
-  add_filter("plugin_action_links_$plugin", 'pts_settings_link' );	
+}
+$plugin = plugin_basename(__FILE__); 
+add_filter("plugin_action_links_$plugin", 'pts_settings_link' );
 
-  
-
-
-  
 
 
 
@@ -132,10 +124,10 @@ function pts_options_page(){
 		
 		// Show a message to say we've done something
 		if($allNo == 7){
-			echo '<div class="updated"><p>' . __('You must check "Yes" for at least 1 day of week! ', 'pts') . '</p></div>';	
+			echo '<div class="updated"><p>' . __('You must check "Yes" for at least 1 day of week! ', 'pts') . '</p></div>';
 		}
 		else{
-			echo '<div class="updated"><p>' . __('Options saved!', 'pts') . '</p></div>';	
+			echo '<div class="updated"><p>' . __('Options saved!', 'pts') . '</p></div>';
 		}		
 		
 	} else {
@@ -165,9 +157,9 @@ function pts_options_page(){
                 
                 echo '<a href="'.PTS_DONATE_URL.'" style="font-weight:bold;font-size:15px;" 
                     title="Donate some money (opens in a new window)!" 
-                    target="_blank" rel="noopener">';		
-                echo __('Consider making a donation',  'pts');			
-                echo '</a> !!! ';			
+                    target="_blank" rel="noopener">';
+                echo __('Consider making a donation',  'pts');
+                echo '</a> !!! ';
                 echo '<br>';
                 echo __('Trust-me - even 1 dollar will make me happy... but you can choose any amount! :)',  'pts');
                 echo '<br>';
@@ -182,7 +174,7 @@ function pts_options_page(){
 
 		<?php
 		if($pts_debug){
-			echo '<h3><strong style="color:red;">'.$plName.' - <span style="text-decoration:blink">Debug active!</span></strong></h3>';								
+			echo '<h3><strong style="color:red;">'.$plName.' - <span style="text-decoration:blink">Debug active!</span></strong></h3>';
 		}
 		?>
 		
@@ -343,13 +335,13 @@ function pts_options_page(){
 		
 		'<br>'
 		. __('If you can, change the timezone to correct this, refresh this page and this message will be shown anymore!','pts')		
-		;		
+		;
 		
 		
 		
 		
 		# javascript to compare the times...
-		echo pts_createJsToCompareTime($msgTimeWrong,$msgTimeOK);			
+		echo pts_createJsToCompareTime($msgTimeWrong,$msgTimeOK);
 		
 		# div usada para reportar hora incorreta...		
 		echo '<div style="padding-left:30px;" id="divjsCT"></div>';
