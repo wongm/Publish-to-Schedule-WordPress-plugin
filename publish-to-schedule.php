@@ -267,6 +267,7 @@ function pts_findNextSlot($post,$changePost = False){
 
 		$datetimeCheck = strtotime(current_time('mysql', $gmt = 0) . ' + '.$offset.' days');
 		$dt = date("Ymd",$datetimeCheck);
+		$monthToCheck = date("m",$datetimeCheck);
 		$msg .=  '' . date('M j, Y',$datetimeCheck) . ' - <span style="<BBB>"> '.__(date("D",$datetimeCheck),'pts').'</span><CCC><DDD><EEE><br>';
 
 		$maxPostsThisDay = pts_getMaxPostsDay($datetimeCheck);
@@ -294,10 +295,28 @@ function pts_findNextSlot($post,$changePost = False){
 
 			if ($maxPostsThisDay == 1)
 			{
-				global $pts_week;
+				global $pts_week, $pts_month, $pts_month_name;
+				
+				// we have a post on this day: reset all the counts
 				if ($nPostsDay > 0) {
+					$pts_month_name = $monthToCheck;
+					$pts_month = 0;
 					$pts_week = 0;
 				}
+				
+				// new month has started: reset the monthly counts
+				if ($pts_month_name != $monthToCheck) {
+					$pts_month_name = $monthToCheck;
+					$pts_month++;
+					$pts_week = 1;
+				}
+				
+				// if publishing monthly, skip the slot for some days
+				if ($pts_options['pts_frequency'] == 'months' && $pts_month < $pts_options['pts_months'] && $pts_month_name == $monthToCheck) {
+					$maxPostsThisDay = 0;
+				}
+				
+				// if publishing weekly, skip the slot for some days
 				if ($pts_options['pts_weeks'] > 1 && $pts_week < $pts_options['pts_weeks']) {
 					$maxPostsThisDay = 0;
 				}

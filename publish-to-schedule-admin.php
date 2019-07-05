@@ -4,7 +4,7 @@
 function pts_option_menu() {
     global $plName;
     
-    if (!current_user_can('manage_options')) return;    
+    if (!current_user_can('manage_options')) return;
 
 	// if (function_exists('current_user_can')) {
 	// 	if (!current_user_can('manage_options')) return;
@@ -48,7 +48,7 @@ add_filter("plugin_action_links_$plugin", 'pts_settings_link' );
 $default_options['pts_start'] = '00:00';
 $default_options['pts_end'] = '23:59';
 $default_options['pts_weeks'] = '1';
-$default_options['pts_months'] = '1';
+$default_options['pts_months'] = '';
 $default_options['pts_infosize'] = 'parcial';
 $default_options['pts_allowstats'] = 'yes';
 
@@ -82,6 +82,7 @@ function pts_options_page(){
 		$pts_options['pts_end'] = $_POST['pts_end'];
 		$pts_options['pts_weeks'] = $_POST['pts_weeks'];
 		$pts_options['pts_months'] = $_POST['pts_months'];
+		$pts_options['pts_frequency'] = $_POST['pts_frequency'];
 		
 		$pts_options['pts_0'] = $_POST['pts_0'];
 		$pts_options['pts_1'] = $_POST['pts_1'];
@@ -109,9 +110,27 @@ function pts_options_page(){
 		if($allNo == 7){
 			$pts_options['pts_1'] = 'Yes';
 		}
-		
 
-        # set the default values if they do not match the hh:mm        
+		# if in day mode: reset week and month values
+		if ($pts_options['pts_frequency'] == 'days')
+		{
+			$pts_options['pts_weeks'] = 1;
+			$pts_options['pts_months'] = '';
+		}
+
+		# if in week mode: reset month value
+		if ($pts_options['pts_frequency'] == 'weeks')
+		{
+			$pts_options['pts_months'] = '';
+		}
+
+		# if in month mode: grab week value
+		if ($pts_options['pts_frequency'] == 'months')
+		{
+			$pts_options['pts_weeks'] = $_POST['pts_months_weeks'];
+		}
+
+        # set the default values if they do not match the hh:mm
         if(!preg_match('/\d{2}:\d{2}/',$pts_options['pts_start'])){
             $pts_options['pts_start'] = '00:00';
         }        
@@ -180,118 +199,141 @@ function pts_options_page(){
 		
 		<fieldset class="options">
 		
-		
-		
-<div class="nav-tab-wrapper">
-    	<span class="nav-tab nav-tab-active"><input type="radio" id="days" name="frequency" value="days">
-		<label for="days">Days</label></span>
-        <span class="nav-tab"><input type="radio" id="weeks" name="frequency" value="weeks">
-		<label for="weeks">Weeks</label></span>
-        <span class="nav-tab"><input type="radio" id="months" name="frequency" value="months">
-		<label for="months">Months</label></span>
-</div>
-
-
-    <div id='sections'>
-    <section id="daysContent">This is the main welcome screen content</section>
-    <section id="weeksContent">The credit screen content should go here</section>
-    <section id="monthsContent">The months screen content should go here</section>
-    </div>
-
 		<?php
 		if($pts_debug){
 			echo '<h3><strong style="color:red;">'.$plName.' - <span style="text-decoration:blink">Debug active!</span></strong></h3>';
 		}
 		?>
 		
-		<h3 style="margin-top:5px;"><?php _e('Which days of week posts are allowed to be auto-scheduled? <br>(The schedule happens only when you click the "Pub. to Schedule" button!)',  'pts')?></h3>
+		<h3 style="margin-top:5px;"><?php _e('When should posts are allowed to be auto-scheduled? <br>(The schedule happens only when you click the "Pub. to Schedule" button!)',  'pts')?></h3>
+
+		<div class="nav-tab-wrapper">
+			<span class="nav-tab <?php if ($pts_options['pts_frequency'] == 'days' || $pts_options['pts_frequency'] == '') { ?>nav-tab-active<?php } ?>"><input type="radio" id="days" name="pts_frequency" value="days" <?php if ($pts_options['pts_frequency'] == 'days' || $pts_options['pts_frequency'] == '') { ?>checked<?php } ?> >
+			<label for="days">By day</label></span>
+			<span class="nav-tab <?php if ($pts_options['pts_frequency'] == 'weeks') { ?>nav-tab-active<?php } ?>"><input type="radio" id="weeks" name="pts_frequency" value="weeks" <?php if ($pts_options['pts_frequency'] == 'weeks') { ?>checked<?php } ?> >
+			<label for="weeks">By week</label></span>
+			<span class="nav-tab <?php if ($pts_options['pts_frequency'] == 'months') { ?>nav-tab-active<?php } ?>"><input type="radio" id="months" name="pts_frequency" value="months" <?php if ($pts_options['pts_frequency'] == 'months') { ?>checked<?php } ?> >
+			<label for="months">By month</label></span>
+		</div>
+
+		<div id='sections'>
+		
+			<section id="daysContent">
 	
-		<?php _e('Put 0 in a day when you do not want posts to be scheduled!',  'pts')?>
-	
-		<p>
-		<?php _e('Example: if you put 0 on Sunday, this plugin will never schedule a post to be published on Sundays. <br> But still, if you want to schedule an article to be published in a Sunday, just schedule it using the standard schedule button of WordPress and it will be published on the date you choose, ignoring all options below!<br>',  'pts')?>
-		<br>
-		<?php _e('For each day, set how many posts will be scheduled!',  'pts')?>		
-		</p>
-		
-		
-		
-		
-		<?php				
-			$days = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
-		?>
-		
-		<table>				
-			<?php
-			$iday = 0;
-			foreach($days as $day){
-
-                $day_value = $pts_options["pts_$iday"];
-
-                if(!$day_value){
-                    $day_value = 'no';
-                }
-				
-			?>
-				
-				<tr valign="top">
-					<th scope="row" align="left" style="padding:5px;"><?php _e(ucfirst($day), 'pts') ?>:</th>
-					
-					<td style="padding:5px;">					
-						<input 
-							type="text" 
-							id="<?php echo $day; ?>"
-							name="<?php echo "pts_$iday"; ?>" 
-                            value="<?php 
-                                if ($day_value == 'no'){
-                                    echo '0'; 
-                                } 
-                                else if ($day_value == 'yes') {
-                                    echo '1'; 
-                                }
-                                else {
-                                    # default to display the actual value!
-                                    echo $day_value ; 
-                                }
-                            ?>" 
-							style="width: 40px;"/>
-					</td>
-					
-				</tr>
-
-
-			<?php
-				
-				$iday += 1;
-			}
+				<!-- nothing here - just shared content -->
 			
-			?>
+			</section><!-- end daysContent -->
+			
+			<section id="weeksContent" <?php if ($pts_options['pts_frequency'] == 'weeks') { ?>style="display: block"<?php } ?>>
+			
+				<p><?php _e('How many weeks between posts?',  'pts')?></p>
+				<p><?php _e('Example: only publish posts every two weeks on Tuesdays.',  'pts')?></p>
+				
+				
+				<table class="optiontable">
+					<tr valign="top">
+						<th scope="row" align="left"><?php _e('Number of weeks between posts', 'pts') ?>:</th>
+						<td><input name="pts_weeks" type="text" id="weeks" value="<?php echo $pts_options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
+						</td>
+					</tr>
+				</table>
+			
+			</section><!-- end weeksContent -->
+			
+			<section id="monthsContent" <?php if ($pts_options['pts_frequency'] == 'months') { ?>style="display: block"<?php } ?>>
+			
+				<p><?php _e('How many months between posts?',  'pts')?></p>
+				<p><?php _e('Example: only publish posts every month on the first Tuesday.',  'pts')?></p>
+			
+				<table class="optiontable">
+					<tr valign="top">
+						<th scope="row" align="left"><?php _e('Number of months between posts', 'pts') ?>:</th>
+						<td><input name="pts_months" type="text" id="months" value="<?php echo $pts_options['pts_months']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row" align="left"><?php _e('Which week of the month', 'pts') ?>:</th>
+						<td><input name="pts_months_weeks" type="text" id="months_weeks" value="<?php echo $pts_options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
+						</td>
+					</tr>
+				</table>
+			
+			</section><!-- end monthsContent -->
+			
+			<div id="sharedDayPicker">
+			
+				<p><?php _e('What days should new posts be published?',  'pts')?></p>
+				
+				<p><?php _e('Put 0 in a day when you do not want posts to be scheduled!',  'pts')?></p>
+			
+				<p>
+				<?php _e('Example: if you put 0 on Sunday, this plugin will never schedule a post to be published on Sundays. <br> But still, if you want to schedule an article to be published in a Sunday, just schedule it using the standard schedule button of WordPress and it will be published on the date you choose, ignoring all options below!<br>',  'pts')?>
+				<br>
+				<?php _e('For each day, set how many posts will be scheduled!',  'pts')?>
+				</p>
+			
+				<?php
+					$days = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
+				?>
+				
+				<table>
+					<?php
+					$iday = 0;
+					foreach($days as $day){
 
-		</table>
+						$day_value = $pts_options["pts_$iday"];
+
+						if(!$day_value){
+							$day_value = 'no';
+						}
+						
+					?>
+						
+						<tr valign="top">
+							<th scope="row" align="left" style="padding:5px;"><?php _e(ucfirst($day), 'pts') ?>:</th>
+							
+							<td style="padding:5px;">
+								<input 
+									type="text" 
+									id="<?php echo $day; ?>"
+									name="<?php echo "pts_$iday"; ?>" 
+									value="<?php 
+										if ($day_value == 'no'){
+											echo '0'; 
+										} 
+										else if ($day_value == 'yes') {
+											echo '1'; 
+										}
+										else {
+											# default to display the actual value!
+											echo $day_value ; 
+										}
+									?>" 
+									style="width: 40px;"/>
+							</td>
+							
+						</tr>
+
+
+					<?php
+						
+						$iday += 1;
+					}
+					
+					?>
+
+				</table>
+				
+			</div><!-- end sharedDayPicker -->
+			
+		</div>
+
  		
  		
-		<h3 style="margin-top:10px;"><?php _e('How many weeks between posts?',  'pts')?></h3>
 		
 		
-		<?php _e('Example: only publish posts every fortnight.',  'pts')?>
-		<br>
 		
 		
-		<table class="optiontable">
-			<tr valign="top">
-				<th scope="row" align="left"><?php _e('Number of weeks between posts', 'pts') ?>:</th>
-				<td><input name="pts_weeks" type="text" id="weeks" value="<?php echo $pts_options['pts_weeks']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
-				</td>
-			</tr>
-		</table>
-		
-		
-		<table class="optiontable">
-			<tr valign="top">
-				<th scope="row" align="left"><?php _e('Number of months between posts', 'pts') ?>:</th>
-				<td><input name="pts_months" type="text" id="months" value="<?php echo $pts_options['pts_months']; ?>" size="10" /><?php _e(' (defaults to 1)', 'pts') ?>
-				</td>
-			</tr>
 		
 		
 
